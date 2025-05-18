@@ -42,4 +42,4 @@ coverage.xml
 Thumbs.db
 
 # Virtual environment
-# venv/ # раскомментируем эту строку, когда создадим виртуальное окружение
+venv/ 
