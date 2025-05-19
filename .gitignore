@@ -1,45 +1,10 @@
-# Byte-code files
-*.pyc
+# Python
 __pycache__/
+*.pyc
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Virtual environments
+venv/
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-.nox/
-.coverage
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Editors and IDEs
-.vscode/
-.idea/
-
-# OS artifacts
-.DS_Store
-Thumbs.db
-
-# Virtual environment
-venv/ 
+# Environment variables
+.env
+".env" 
