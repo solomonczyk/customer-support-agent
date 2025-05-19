@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 
 # 1. Загружаем переменные окружения из файла .env
 load_dotenv()
@@ -15,23 +15,31 @@ if not google_api_key:
     print("Пожалуйста, убедитесь, что файл .env существует и содержит строку GOOGLE_API_KEY=...")
 else:
     print("API ключ Google успешно загружен.")
-    # 2. Инициализируем языковую модель
-    # Мы используем ChatGoogleGenerativeAI для чатовых моделей Gemini
-    # model="gemini-pro" указывает на конкретную модель (может потребоваться другая в зависимости от региона/доступа)
-    llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=google_api_key)
-    print(f"Языковая модель {llm.model_name} инициализирована.")
 
-    # 3. Отправляем простой запрос к модели
-    # LangChain использует объекты "Message" для представления реплик в диалоге
-    message = HumanMessage(content="Привет! Расскажи мне что-нибудь интересное.")
+    # 2. Инициализируем языковую модель Google Generative AI
+    # Используем модель 'gemini-1.5-flash-latest', которая есть в списке доступных
+    try:
+        # Передаем google_api_key непосредственно в конструктор ChatGoogleGenerativeAI
+        llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest", google_api_key=google_api_key)
+        print(f"Языковая модель {llm.model} инициализирована.")
+    except Exception as e:
+        print(f"Ошибка при инициализации модели: {e}")
+        print("Убедитесь, что имя модели правильное и API ключ корректен.")
+        exit() # Выходим, если не удалось инициализировать модель
 
-    print(f"\nОтправляем запрос к модели: '{message.content}'")
+    # 3. Отправляем тестовый запрос к модели
+    user_query = "Привет! Расскажи мне что-нибудь интересное."
+    print(f"\nОтправляем запрос к модели: '{user_query}'")
 
     try:
-        # Вызываем модель и получаем ответ
-        response = llm.invoke([message]) # invoke принимает список сообщений
+        # Создаем сообщение от пользователя
+        messages = [HumanMessage(content=user_query)]
+
+        # Отправляем запрос и получаем ответ
+        response = llm.invoke(messages)
+
+        # Выводим ответ
         print("\nОтвет модели:")
-        # Ответ модели также является объектом Message, content содержит текст
         print(response.content)
 
     except Exception as e:
