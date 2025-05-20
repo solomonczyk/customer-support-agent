@@ -40,48 +40,43 @@ def load_api_key():
 
 def initialize_llm(api_key):
     """Инициализация языковой модели."""
-    # Настраиваем Google API
     genai.configure(api_key=api_key)
     
     try:
-        # Получаем список доступных моделей
         models = genai.list_models()
         available_models = []
         
         logger.info("Доступные модели Google Gemini:")
         for model in models:
             model_name = model.name
-            # Выводим полное имя модели включая путь
             logger.info(f" - {model_name}")
-            # Добавляем только название модели (без пути)
-            if "gemini" in model_name.lower():
-                # Получаем только имя модели без пути
-                name_parts = model_name.split("/")
-                simple_name = name_parts[-1]
-                available_models.append(simple_name)
-                
+            name_parts = model_name.split("/")
+            simple_name = name_parts[-1]
+            available_models.append(simple_name)
+                    
         logger.info(f"Доступные модели Gemini: {available_models}")
         
-        # Приоритет моделей обновлен с учетом новых моделей Gemini 2.5
         model_priority = [
-            "gemini-2.5-flash",  # Новая бесплатная модель
-            "gemini-2.5-pro",    # Новая платная модель
-            "gemini-1.5-pro",
-            "gemini-1.5-flash",
-            "gemini-pro"
+            "gemini-2.5-flash-preview-05-20", # Актуальная предварительная версия Flash 2.5
+            "gemini-2.5-flash-preview-04-17", # Еще одна предварительная версия Flash 2.5
+            "gemini-1.5-flash-latest",        # Актуальная версия Flash 1.5
+            "gemini-1.5-flash",               # Общая версия Flash 1.5
+            "gemini-2.5-pro-preview-05-06",   # Актуальная предварительная версия Pro 2.5 (платная/строгие квоты)
+            "gemini-2.5-pro-exp-03-25",       # Еще одна предварительная версия Pro 2.5
+            "gemini-1.5-pro-latest",          # Актуальная версия Pro 1.5 (строгие квоты)
+            "gemini-1.5-pro",                 # Общая версия Pro 1.5 (строгие квоты)
+            "gemini-pro"                      # Оригинальная Pro модель (строгие квоты)
         ]
         
-        # Выбираем модель по приоритету
         selected_model = None
         
-        for model_name in model_priority:
-            if model_name in available_models:
-                selected_model = model_name
+        for model_name_in_priority in model_priority: # Имя переменной изменено для ясности
+            if model_name_in_priority in available_models:
+                selected_model = model_name_in_priority
                 logger.info(f"Выбрана модель по приоритету: {selected_model}")
                 break
                 
         if not selected_model and available_models:
-            # Если ни одна из предпочтительных моделей не найдена, берем первую доступную
             selected_model = available_models[0]
             logger.info(f"Используется первая доступная модель: {selected_model}")
             
@@ -90,6 +85,7 @@ def initialize_llm(api_key):
             return None
             
         # Инициализируем модель LangChain
+        # Передаем сюда selected_model, который теперь соответствует именам из genai.list_models()
         llm = ChatGoogleGenerativeAI(model=selected_model, google_api_key=api_key)
         logger.info(f"Языковая модель {selected_model} инициализирована.")
         return llm
