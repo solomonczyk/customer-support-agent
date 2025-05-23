@@ -1,0 +1,14 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.9.1
+    ports:
+      - "6333:6333"
+
+  app:
+    build:              # ← все, что относится к сборке, только здесь
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      - qdrant
